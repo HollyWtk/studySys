@@ -1,0 +1,69 @@
+server:
+  port: 8088
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-bp17x731avyvi9730do.mysql.rds.aliyuncs.com:3306/study_sys?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true&useCompression=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: yhh
+    password: Mdzz112406 
+    druid: 
+      initial-size: 5 
+      min-idle: 10 
+      max-active: 20 
+      web-stat-filter:
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" 
+      stat-view-servlet: 
+        login-username: druid
+        login-password: druid
+  redis:
+    host: r-bp1a8a8ada8b5ba4pd.redis.rds.aliyuncs.com
+    port: 6379
+    password: Mdzz112406
+    timeout: 5000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+  session:
+    store-type: redis
+mybatis-plus:
+  mapper-locations:
+    - classpath*:com/**/mapper/*.xml
+# �Զ���redis��ֵ
+redis:
+  key:
+    prefix:
+      otpCode: "system:otpCode:" #��̬У����ǰ׺
+    expire:
+      otpCode: 60 #��̬У�������ʱ��
+
+secure:
+  ignored:
+    urls: #��ȫ·��������
+      - /swagger-ui.html
+      - /swagger-resources/**
+      - /swagger/**
+      - /**/v2/api-docs
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.ico
+      - /webjars/springfox-swagger-ui/**
+      - /actuator/**
+      - /druid/**
+      - /admin/login
+      - /admin/register
+      - /upload/product/**
+      - /doc.html
+
+#jwt config
+jwt:
+  tokenHeader: Authorization #JWT�洢������ͷ
+  secret: mall-member-secret #JWT�ӽ���ʹ�õ���Կ
+  expiration: 604800 #JWT�ĳ�����ʱ��(60*60*24)
+  tokenHead: Bearer #JWT�������õ���ͷ
+logging:
+  level:
+    com.yhh.studysys.mapper: DEBUG
