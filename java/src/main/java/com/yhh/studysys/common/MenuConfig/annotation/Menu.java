@@ -18,4 +18,10 @@ public @interface Menu {
     int order() default Integer.MAX_VALUE;
 
     String parent() default "";
+
+    /**
+     * 一级菜单访问地址,如果不存在默认为目录,不跳转页面
+     * @return
+     */
+    String url() default "";
 }

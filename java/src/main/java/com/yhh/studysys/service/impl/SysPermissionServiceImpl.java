@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yhh.studysys.common.enums.PermissionType;
 import com.yhh.studysys.dto.PermissionAddDto;
 import com.yhh.studysys.dto.PermissionQueryDto;
 import com.yhh.studysys.dto.PermissionUpdateDto;
@@ -73,15 +74,23 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             list = permissionIds.isEmpty() ? new ArrayList<>() : this.list(wrapper.in(SysPermission::getId,permissionIds));
         }
         return list.stream()
-                .filter(permission -> permission.getPid() == 0L)
+                .filter(permission -> permission.getPid() == null)
                 .map(permission -> covert(permission, list)).collect(Collectors.toList());
     }
 
     @Override
     public List<Long> getPermissionByRoleId(Long roleId) {
-        return rolePermissionRelationService.list(new LambdaQueryWrapper<RolePermissionRelation>()
-                .eq(RolePermissionRelation::getRoleId,roleId))
+        List<Long> permissionIds = rolePermissionRelationService.list(new LambdaQueryWrapper<RolePermissionRelation>()
+                .eq(RolePermissionRelation::getRoleId, roleId))
                 .stream().map(RolePermissionRelation::getPermissionId).collect(Collectors.toList());
+        if(permissionIds.isEmpty()){
+            return new ArrayList<>();
+        }
+        return this.list(new LambdaQueryWrapper<SysPermission>()
+                .in(SysPermission::getId,permissionIds).eq(SysPermission::getType, PermissionType.BUTTON.type()))
+                .stream().map(SysPermission::getId)
+                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -111,7 +120,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     @Override
     public List<SysPermission> listContents() {
         LambdaQueryWrapper<SysPermission> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysPermission::getType,0);
+        wrapper.ne(SysPermission::getType,2);
         return this.list(wrapper);
     }
 
@@ -135,7 +144,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         PermissionNode node = new PermissionNode();
         BeanUtils.copyProperties(permission,node);
         List<PermissionNode> children = permissionList.stream()
-                .filter(subPermission -> subPermission.getPid().equals(permission.getId()))
+                .filter(subPermission -> subPermission.getPid() != null && subPermission.getPid().equals(permission.getId()))
                 .map(subPermission -> covert(subPermission,permissionList)).collect(Collectors.toList());
         node.setChildren(children);
         return node;

@@ -59,4 +59,7 @@ public class PermissionUpdateDto {
     @ApiModelProperty(value = "路由")
     private String pageIndex;
 
+    @ApiModelProperty("接口访问地址")
+    private String value;
+
 }

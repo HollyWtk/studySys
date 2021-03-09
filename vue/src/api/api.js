@@ -20,7 +20,7 @@ function apiAxios (method, url, params, success, failure) {
     withCredentials: true,
     headers:{
       "Access-Control-Allow-Origin":"*",
-      "Authorization":sessionStorage.getItem('tokenHead') + " " + sessionStorage.getItem('token')
+      "Authorization":sessionStorage.getItem('token')
     }
   }).then(function (res) {
     if (res.data.code === 200) {
@@ -36,6 +36,7 @@ function apiAxios (method, url, params, success, failure) {
       }
     }
   }).catch(function(res){
+    console.log(res);
     let response = res.response;
     if(response){
       let code = response.data.code;
@@ -82,13 +83,16 @@ service.http = function (method,url,data,params, success, failure) {
      "Authorization":sessionStorage.getItem('tokenHead') + " " + sessionStorage.getItem('token')
    }
  }).then(function (res) {
-   console.log("success:" + res);
-   if (res.data.code === 200) {
+   let code = res.data.code;
+   if (code === 200) {
      if (success) {
        success(res.data)
        return res.data;
      }
-   }else {
+   }else if(code === 401){
+    _this.$message.error("没有相关权限")
+   }
+   else {
      if (failure) {
        failure(res.data)
      }else{

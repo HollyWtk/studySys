@@ -29,20 +29,20 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/permission")
-@Menu(icon = "el-icon-lx-lock",index = "Permission",title = "权限管理",order = 3)
+@Menu(icon = "el-icon-lx-lock",index = "Permission",title = "权限管理",order = 3,parent = "系统管理")
 public class SysPermissionController {
 
     @Autowired
     private ISysPermissionService sysPermissionService;
 
-    @GetMapping("/menuList")
+    @GetMapping(value = "/menuList",name = "查询菜单")
     @ApiOperation("查询菜单")
     public CommonResult<List<PermissionNode>> getPermission(Principal principal, @RequestParam(required = false) Long roleId){
         PermissionTreeQueryDto dto = new PermissionTreeQueryDto(principal.getName(),roleId);
         return CommonResult.success(sysPermissionService.queryListTree(dto));
     }
 
-    @GetMapping("/list")
+    @GetMapping(value = "/list",name = "权限列表")
     @ApiOperation("权限列表")
     public CommonResult<IPage<SysPermission>> roleList(@RequestParam(value = "name", required = false) String name,
                                                        @RequestParam(value = "status",required = false) int status,
@@ -51,26 +51,26 @@ public class SysPermissionController {
         return CommonResult.success(sysPermissionService.pageList(new Page<>(pageNum,pageSize),new PermissionQueryDto(name,status)));
     }
 
-    @GetMapping("/listContents")
+    @GetMapping(value = "/listContents",name = "目录下拉框")
     @ApiOperation("目录下拉框")
     public CommonResult<List<SysPermission>> listContents(){
         return CommonResult.success(sysPermissionService.listContents());
     }
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add",name = "添加权限")
     @ApiOperation("添加")
     public CommonResult<Boolean> add(@RequestBody PermissionAddDto dto){
         return CommonResult.success(sysPermissionService.addPermission(dto));
     }
 
-    @PutMapping("/update")
+    @PutMapping(value = "/update",name = "编辑权限")
     @ApiOperation("编辑")
     public CommonResult<Boolean> update(@RequestBody PermissionUpdateDto dto){
         return CommonResult.success(sysPermissionService.updatePermission(dto));
     }
 
     @ApiOperation("删除")
-    @DeleteMapping("/delete")
+    @DeleteMapping(value = "/delete",name = "删除权限")
     public CommonResult<Boolean> delete(@RequestBody List<Long> ids){
         return CommonResult.success(sysPermissionService.deletePermission(ids));
     }

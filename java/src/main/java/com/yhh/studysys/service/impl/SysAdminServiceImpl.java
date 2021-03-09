@@ -15,10 +15,7 @@ import com.yhh.studysys.entity.SysPermission;
 import com.yhh.studysys.entity.SysRole;
 import com.yhh.studysys.mapper.SysAdminMapper;
 import com.yhh.studysys.security.util.JwtTokenUtil;
-import com.yhh.studysys.service.IAdminPermissionRelationService;
-import com.yhh.studysys.service.IAdminRoleRelationService;
-import com.yhh.studysys.service.ISysAdminService;
-import com.yhh.studysys.service.ISysRoleService;
+import com.yhh.studysys.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -50,9 +47,6 @@ import java.util.stream.Collectors;
 public class SysAdminServiceImpl extends ServiceImpl<SysAdminMapper, SysAdmin> implements ISysAdminService {
 
     @Autowired
-    private IAdminPermissionRelationService adminPermissionRelationService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -64,13 +58,18 @@ public class SysAdminServiceImpl extends ServiceImpl<SysAdminMapper, SysAdmin> i
     @Autowired
     private ISysRoleService sysRoleService;
 
+    @Autowired
+    private IRolePermissionRelationService rolePermissionRelationService;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         //获取用户信息
         SysAdmin sysAdmin = this.getOne(new LambdaQueryWrapper<SysAdmin>().eq(SysAdmin::getUsername, username));
         if (sysAdmin != null) {
-            List<SysPermission> permissionList = adminPermissionRelationService.queryPermissionsByAdminId(sysAdmin.getId());
+            List<AdminRoleRelation> adminRoleRelations = adminRoleRelationService.queryRoleByAdminId(sysAdmin.getId());
+            List<SysPermission> permissionList = rolePermissionRelationService.queryPermissionByRole(
+                    Objects.requireNonNull(adminRoleRelations.stream().findFirst().orElse(null)).getRoleId());
             return new AdminUserDetails(sysAdmin,permissionList);
         }
         throw new UsernameNotFoundException("用户名或密码错误");
@@ -139,7 +138,7 @@ public class SysAdminServiceImpl extends ServiceImpl<SysAdminMapper, SysAdmin> i
         }
         wrapper.eq(SysAdmin::getStatus,dto.getStatus());
         return this.page(page,wrapper).convert(k ->{
-            List<AdminRoleRelation> list = adminRoleRelationService.list(new LambdaQueryWrapper<AdminRoleRelation>().eq(AdminRoleRelation::getAdminId, k.getId()));
+            List<AdminRoleRelation> list = adminRoleRelationService.queryRoleByAdminId(k.getId());
             if(!list.isEmpty()){
                 List<SysRole> roles = sysRoleService.list(new LambdaQueryWrapper<SysRole>().in(SysRole::getId,list.stream().map(AdminRoleRelation::getRoleId).collect(Collectors.toList())));
                 k.setRoleName(roles.stream().map(SysRole::getName).collect(Collectors.joining(",")));

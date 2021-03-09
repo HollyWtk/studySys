@@ -48,6 +48,7 @@
                 <el-table-column prop="type" label="类型" align="center" :formatter="showType"></el-table-column>
                 <el-table-column prop="parentName" label="父级权限" align="center"></el-table-column>
                 <el-table-column prop="pageIndex" label="路由" align="center"></el-table-column>
+                <el-table-column prop="value" label="接口地址" align="center"></el-table-column>
                 <!-- <el-table-column prop="uri" label="静态资源路径"  width="250" align="center"></el-table-column> -->
                 <el-table-column label="状态" align="center">
                     <template slot-scope="scope">
@@ -106,6 +107,9 @@
                  <el-form-item label="路由" prop="pageIndex">
                     <el-input v-model="add.pageIndex"></el-input>
                 </el-form-item>
+                <el-form-item label="接口地址" prop="pageIndex">
+                    <el-input v-model="add.value"></el-input>
+                </el-form-item>
                 <el-form-item label="描述" prop="description">
                     <el-input v-model="add.description"></el-input>
                 </el-form-item>
@@ -152,6 +156,9 @@
                  <el-form-item label="路由" prop="pageIndex">
                     <el-input v-model="form.pageIndex"></el-input>
                 </el-form-item>
+                 <el-form-item label="接口地址" prop="pageIndex">
+                    <el-input v-model="form.value"></el-input>
+                </el-form-item>
                 <el-form-item label="描述" prop="description">
                     <el-input v-model="form.description"></el-input>
                 </el-form-item>
@@ -189,7 +196,8 @@ export default {
                 pageIndex:'',
                 description: '',
                 status: 1,
-                pid: 0
+                pid: 0,
+                value:''
             },
             query: {
                 name: '',

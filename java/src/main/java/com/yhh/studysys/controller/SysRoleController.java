@@ -28,20 +28,20 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/role")
-@Menu(title = "角色管理",index = "Role",icon = "el-icon-lx-infofill",order = 2)
+@Menu(title = "角色管理",index = "Role",icon = "el-icon-lx-infofill",order = 2,url = "/list",parent = "系统管理")
 public class SysRoleController {
 
     @Autowired
     private ISysRoleService sysRoleService;
 
     @ApiOperation("新增角色")
-    @PostMapping("/add")
+    @PostMapping(value = "/add",name = "添加角色")
     public CommonResult<Boolean> addRole(@RequestBody RoleAddDto dto) throws BusinessException {
         return CommonResult.success(sysRoleService.saveRole(dto));
     }
 
     @ApiOperation("列表")
-    @GetMapping("/list")
+    @GetMapping(value = "/list",name = "角色列表")
     public CommonResult<IPage<SysRole>> roleList(@RequestParam(value = "name", required = false) String name,
                                                  @RequestParam(value = "status", required = false) int status,
                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
@@ -50,19 +50,19 @@ public class SysRoleController {
     }
 
     @ApiOperation("更改")
-    @PutMapping("/update")
+    @PutMapping(value = "/update",name = "修改角色")
     public CommonResult<Boolean> update(@RequestBody RoleUpdateDto dto){
         return CommonResult.success(sysRoleService.updateRole(dto));
     }
 
     @ApiOperation("删除")
-    @DeleteMapping("/delete")
+    @DeleteMapping(value = "/delete",name = "删除角色")
     public CommonResult<Boolean> delete(@RequestBody List<Long> ids){
         return CommonResult.success(sysRoleService.deleteRoles(ids));
     }
 
     @ApiOperation("查询所有角色")
-    @GetMapping("/queryAll")
+    @GetMapping(value = "/queryAll",name = "查询所有角色")
     public CommonResult<List<SysRole>> queryAllRole(){
         return CommonResult.success(sysRoleService.queryAllRole());
     }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,7 @@ public class AdminUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //返回当前用户的权限
         return permissionList.stream()
-                .filter(permission -> permission.getValue()!=null)
+                .filter(permission -> StringUtils.isNotBlank(permission.getValue()))
                 .map(permission ->new SimpleGrantedAuthority(permission.getValue()))
                 .collect(Collectors.toList());
     }

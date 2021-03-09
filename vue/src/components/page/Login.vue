@@ -52,8 +52,7 @@ export default {
                     this.$api.post('admin/login',this.param,data =>{
                         this.$message.success('登录成功');
                         sessionStorage.setItem('username', this.param.username);
-                        sessionStorage.setItem('token',data.data.token);
-                        sessionStorage.setItem('tokenHead',data.data.tokenHead);
+                        sessionStorage.setItem('token',data.data.tokenHead + " " + data.data.token);
                         this.$router.push('/');
                     });
                 }

@@ -1,20 +1,30 @@
 package com.yhh.studysys.security.config;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import com.yhh.studysys.security.component.RoleBasedVoter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,9 +52,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         //允许跨域请求的OPTIONS请求
         registry.antMatchers(HttpMethod.OPTIONS).permitAll();
+
         //任何请求需要身份认证
         registry.and()
                 .authorizeRequests()
+                //自定义权限校验器
+                .accessDecisionManager(accessDecisionManager())
                 .anyRequest()
                 .authenticated()
                 // 关闭跨站请求防护及不使用session
@@ -62,13 +75,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint())
                 // 自定义权限拦截器JWT过滤器
                 .and()
-                .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                ;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService())
-                .passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -85,6 +98,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public AccessDecisionManager accessDecisionManager() {
+        List<AccessDecisionVoter<?>> decisionVoters
+                = Arrays.asList(
+                new WebExpressionVoter(),
+                new RoleVoter(),
+                new AuthenticatedVoter(),
+                new RoleBasedVoter(ignoreUrlsConfig().getUrls()));
+        return new UnanimousBased(decisionVoters);
     }
 
     @Bean

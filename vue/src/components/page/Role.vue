@@ -192,12 +192,26 @@ export default {
                     }
                     if(k.children.length > 0){
                         node.children = [];
-                        let child = {
-                            id : k.children.id,
-                            label : k.children.name
-                        }
-                        node.children.push(child);
+                        k.children.forEach(j =>{
+                            const child = {
+                                id : j.id,
+                                label : j.name
+                            }
+                            if(j.children.length >0){
+                                    console.log(child)
+                                    child.children = [];
+                                    j.children.forEach(k =>{
+                                        let childSub = {
+                                            id : k.id,
+                                            label : k.name
+                                        }
+                                        child.children.push(childSub);
+                                    })
+                            }
+                            node.children.push(child);
+                        })
                     }
+                     console.log(node);
                     this.tree.push(node);
                 })
             })
@@ -250,11 +264,7 @@ export default {
             this.multipleSelection = [];
         },
         treeChecked(){
-            let permission = [];
-            this.$refs.tree.getCheckedNodes().forEach(k =>{
-                permission.push(k.id);
-            })
-            return permission;
+            return this.$refs.tree.getCheckedKeys();
         },
          handleAdd(){
             this.addVisible = true;
@@ -292,6 +302,7 @@ export default {
             row.permissionIds.forEach(k =>{
                 permission.push(k);
             })
+            console.log(permission)
             this.$nextTick(function() {
                 this.$refs.tree.setCheckedKeys(permission);
             })
@@ -301,6 +312,9 @@ export default {
         // 保存编辑
         saveEdit() {
             this.form.permissionIds = this.treeChecked();
+            this.$refs.tree.getHalfCheckedKeys().forEach(k =>{
+                this.form.permissionIds.push(k);
+            })
             this.$api.put("/role/update",this.form,data =>{
                 if(data.code === 200){
                     this.$message.success(`修改成功`);

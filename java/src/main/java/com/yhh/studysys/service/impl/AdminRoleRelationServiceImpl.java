@@ -1,10 +1,13 @@
 package com.yhh.studysys.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yhh.studysys.entity.AdminRoleRelation;
 import com.yhh.studysys.mapper.AdminRoleRelationMapper;
 import com.yhh.studysys.service.IAdminRoleRelationService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminRoleRelationServiceImpl extends ServiceImpl<AdminRoleRelationMapper, AdminRoleRelation> implements IAdminRoleRelationService {
 
+    @Override
+    public List<AdminRoleRelation> queryRoleByAdminId(Long adminId) {
+        return this.list(new LambdaQueryWrapper<AdminRoleRelation>().eq(AdminRoleRelation::getAdminId, adminId));
+    }
 }

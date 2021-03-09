@@ -36,7 +36,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/admin")
 @Api(tags = "用户管理模块")
-@Menu(icon = "el-icon-lx-people",index = "Admin",title = "用户管理",order = 1)
+@Menu(icon = "el-icon-lx-people",index = "Admin",title = "用户管理",order = 1,url = "/list",parent = "系统管理")
 public class SysAdminController {
 
     @Autowired
@@ -69,7 +69,7 @@ public class SysAdminController {
     }
 
     @ApiOperation(value = "刷新token")
-    @GetMapping(value = "/refreshToken")
+    @GetMapping(value = "/refreshToken",name = "刷新token")
     public CommonResult<Map<String,String>> refreshToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
         String refreshToken = sysAdminService.refreshToken(token);
@@ -83,7 +83,7 @@ public class SysAdminController {
     }
 
     @ApiOperation(value = "获取当前登录用户信息")
-    @GetMapping(value = "/info")
+    @GetMapping(value = "/info",name = "获取当前登录用户信息")
     public CommonResult<Map<String,Object>> getAdminInfo(Principal principal) {
         String username = principal.getName();
         SysAdmin umsAdmin = sysAdminService.getAdminByCondition(AdminQueryDto.builder().username(username).build());
@@ -95,7 +95,7 @@ public class SysAdminController {
     }
 
     @ApiOperation(value = "登出功能")
-    @PostMapping(value = "/logout")
+    @PostMapping(value = "/logout",name = "登出")
     public CommonResult<Object> logout() {
         return CommonResult.success(null);
     }
@@ -112,13 +112,13 @@ public class SysAdminController {
     }
 
     @ApiOperation("修改指定用户信息")
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/update",name = "修改指定用户信息")
     public CommonResult<Object> update(@RequestBody AdminUpdateDto dto) {
         return sysAdminService.update(dto) ? CommonResult.success(null) : CommonResult.failed();
     }
 
     @ApiOperation("删除用户")
-    @DeleteMapping(value = "/delete")
+    @DeleteMapping(value = "/delete",name = "删除用户")
     public CommonResult<Object> delete(@RequestBody List<Long> ids) {
         return sysAdminService.delete(ids) ? CommonResult.success(null) : CommonResult.failed();
     }

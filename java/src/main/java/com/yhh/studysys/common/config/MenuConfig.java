@@ -19,7 +19,7 @@ import java.util.Objects;
  * @Desc
  * @Date: 2021/3/1 17:22
  */
-@Component
+//@Component
 public class MenuConfig implements BeanPostProcessor {
 
     private ISysPermissionService sysPermissionService;
@@ -50,6 +50,7 @@ public class MenuConfig implements BeanPostProcessor {
         SysPermission permission = SysPermission.builder()
                 .icon(icon)
                 .pageIndex(index.toLowerCase(Locale.ROOT))
+                .value(index)
                 .uri("../components/page/" + index + ".vue")
                 .name(title)
                 .createTime(LocalDateTime.now())

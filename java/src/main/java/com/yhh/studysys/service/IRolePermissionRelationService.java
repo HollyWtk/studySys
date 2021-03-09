@@ -2,6 +2,9 @@ package com.yhh.studysys.service;
 
 import com.yhh.studysys.entity.RolePermissionRelation;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yhh.studysys.entity.SysPermission;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRolePermissionRelationService extends IService<RolePermissionRelation> {
 
+    List<SysPermission> queryPermissionByRole(Long roleId);
 }

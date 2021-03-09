@@ -73,13 +73,7 @@ export default {
     },
     methods:{
         menu(){
-            this.items = [
-                {
-                    icon: 'el-icon-lx-home',
-                    index: 'dashboard',
-                    title: '系统首页'
-                }
-            ];
+            this.items = [];
             this.$api.get("permission/menuList",{"username":sessionStorage.getItem('username')},data =>{
                 data.data.forEach(k => {
                     let item = {};
@@ -87,17 +81,31 @@ export default {
                     item.index = k.pageIndex;
                     item.title = k.name;
                     if(k.children.length > 0){
-                        item.subs = [];
+                        if(this.checkButtonPermission(k.children)){
+                            item.subs = [];
+                        }
                         k.children.forEach(c =>{
-                            let child = {};
-                            child.index = c.pageIndex;
-                            child.title = c.name;
-                            item.subs.push(child);
+                            if(c.type != 2) {
+                                let child = {};
+                                child.index = c.pageIndex;
+                                child.title = c.name;
+                                item.subs.push(child);
+                            }
+
                         })
                     }
                     this.items.push(item);
                 });             
             })
+        },
+        checkButtonPermission(children){
+            let flag = false;
+            children.forEach(k =>{
+                if(k.type === 1 || k.type === 0){
+                    flag = true;
+                }
+            })
+            return flag;
         }
     }
 };

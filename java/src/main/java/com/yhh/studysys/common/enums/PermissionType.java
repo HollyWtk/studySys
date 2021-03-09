@@ -2,6 +2,8 @@ package com.yhh.studysys.common.enums;
 
 public enum PermissionType {
 
+    CONTENT(0,"目录权限"),
+
     Menu(1,"菜单权限"),
 
     BUTTON(2,"按钮权限"),
